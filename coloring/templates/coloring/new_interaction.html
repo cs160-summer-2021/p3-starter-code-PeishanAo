@@ -9,7 +9,13 @@
 	<script type="text/javascript" src="{% static 'coloring/vendors/jquery/jquery-3.3.1.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'coloring/vendors/paper/paper-full.min.js' %}"></script>
 
+
 	<style type="text/css">
+		html,body{
+		    	padding: 0;
+                margin: 0;
+		    	height: 100%;
+		    }
 		#color-palette {
 			width: 300px;
 			background-color: #f1f1f1;
@@ -34,11 +40,60 @@
 		    margin-left: auto;
 		    margin-right: auto;
 		    display: block;
+		    grid-column-start: 5;
+		    grid-column-end: 15;
+		    grid-row-start: 2;
+		    grid-row-end: 12;
+		}
+
+		.container {
+			grid-template-columns: repeat(20, 1fr);
+			grid-template-rows: repeat(20, 1fr);
+			position: fixed;
+			height: 100%;
+			min-width: 100vw;
+			display: grid;
+			grid-gap: 0px;
+			border: none;
+			padding: 0;
+			background-color: #f5f5f5;
+		}
+
+		/*https://stackoverflow.com/questions/48832432/rounded-input-type-color*/
+		input[type=color] {
+		    display: none;
+		}
+		span {
+		  border-radius: 50%;
+		  width: 100px;
+		  height: 100px; 
+		  background-color:black;
+		  display:inline-block;
+		  grid-column-start: 3;
+		  grid-column-end: 4;
+		  grid-row-start: 2;
+		  grid-row-end: 3;
 		}
 	</style>
 
 	<script type="text/javascript" canvas="canvas">
 		window.onload = function() {
+			var colorWell;
+			var defaultColor = "#000000";
+			function startup() {
+			  colorWell = document.querySelector("#colorWell");
+			  colorWell.value = defaultColor;
+			  colorWell.addEventListener("input", getColor, false);
+			  colorWell.addEventListener("change", getColor, false);
+			  colorWell.select();
+			}
+			startup();
+
+			var curr = "#000000";
+			function getColor(event) {
+				curr = event.target.value;
+			}
+
 			var canvas = document.getElementById('myCanvas');
 
 			// coloring page
@@ -48,13 +103,6 @@
 				filePath: '/static/coloring/images/mandala-freepik.svg'
 			};
 
-			// color palette
-			var cp = {
-				history: ["#000000"], // black selected by default
-				options: [],
-				$container: $('#color-palette')
-			}
-
 			function myCustomInteraction() {
 				var tool = new paper.Tool();
 
@@ -63,45 +111,18 @@
 				    if (hit) {
 				    		// Color pallette keeps track of the full history of colors, though we
 				    		// only color in with the most-recent color.
-				        hit.item.fillColor = cp.history[cp.history.length - 1];
+				        hit.item.fillColor = curr;
 				    }
 				}
 			}
 
-			// create a color palette with the given colors
-			function createColorPalette(colors){
-
-				// create a swatch for each color
-				for (var i = colors.length - 1; i >= 0; i--) {
-					var $swatch = $("<div>").css("background-color", colors[i])
-									   .addClass("swatch");
-					$swatch.click(function(){
-						// add color to the color palette history
-					  	cp.history.push($(this).css("background-color"));
-					});
-					cp.$container.append($swatch);
-				}
-			}
-
-			// loads a set of colors from a json to create a color palette
-			function getColorsCreatePalette(){
-				cp.$container.html(" ");
-				$.getJSON('/static/coloring/vendors/material/material-colors.json', function(colors){
-					var keys = Object.keys(colors);
-					for (var i = keys.length - 1; i >= 0; i--) {
-						cp.options.push(colors[keys[i]][500]);
-					}
-					createColorPalette(cp.options);
-				});
-			}
-
 			function init(custom){
 				paper.setup(canvas);
-				getColorsCreatePalette();
 
 				paper.project.importSVG(mandala.filePath, function(item) {
 					mandala.item = item._children["design-freepik"];
 				    paper.project.insertLayer(0,mandala.item);
+				    paper.project.layers[0].fitBounds(paper.view.bounds);
 
 				    if (custom) {
 				    	myCustomInteraction();
@@ -118,8 +139,26 @@
 	</script>
 </head>
 <body>
+	<div class="container">
+	    <!-- color -->
+		<span id="color_front"></span>
+		<input type="color" value="#000000" id="colorWell">
 
-	<canvas id="myCanvas" width="750px" height="750px"></canvas>
-	<div id="color-palette"></div>
+		<canvas id="myCanvas" width="500px" height="500px"></canvas>
+		<div id="color-palette"></div>
+	</div>
+
+	<script type="text/javascript">
+		$("#colorWell").change(function(event) {
+		    console.log($(this).val());
+		    $("#color_front").css('background-color',$(this).val());
+		});
+
+		$("#color_front").click(function(event) {
+		    $("#colorWell").click();
+		});
+	</script>
+
+	
 </body>
 </html>
