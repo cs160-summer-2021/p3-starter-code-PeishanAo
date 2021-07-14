@@ -6,4 +6,5 @@ urlpatterns = [
     path('new_interaction', views.new_interaction, name='new_interaction'),
     path('favorite', views.favorite, name='favorite'),
     path('popular', views.popular, name='popular'),
+    path('home', views.home, name='home'),
 ]

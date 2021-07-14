@@ -47,7 +47,7 @@
 			height: 250px;
 		}
 		#image-1{
-			background-color: grey;
+			background-color: white;
 			  grid-column-start: 2;
 		    grid-column-end: 7;
 		    grid-row-start: 2;
@@ -265,7 +265,8 @@
 	</div>
 	<div class="background">
 
-		<div class="image" id="image-1">
+		<div class="image" id="image-1" onclick="jumpToNext()">
+			<img src="/static/coloring/images/mandala-freepik.svg">
 		</div>
 		<div class="image" id="image-2">
 		</div>
@@ -280,7 +281,8 @@
 
 
 		<div class="navbar">
-	  		<a href="http://localhost:8000/coloring/new_interaction">HOME</a>
+			<a href="http://localhost:8000/coloring/home">HOME</a>
+	  		<a href="http://localhost:8000/coloring/new_interaction">COLORING</a>
 	  		<a href="http://localhost:8000/coloring/favorite">FAVORITE</a>
 	  		<a href="http://localhost:8000/coloring/popular" class="active">POPULAR</a>
 		</div>
@@ -296,6 +298,11 @@
 		$("#color_front").click(function(event) {
 		    $("#colorWell").click();
 		});
+
+		function jumpToNext(){
+			location.href = 'http://localhost:8000/coloring/new_interaction';
+		}
+
 	</script>
 
 	

@@ -14,3 +14,6 @@ def favorite(request):
 
 def popular(request):
     return render(request, 'coloring/popular.html')
+
+def home(request):
+    return render(request, 'coloring/home.html')
